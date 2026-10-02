@@ -22,7 +22,8 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'python3 --version'
-                sh 'python3 app.py'
+                sh 'python3 -m py_compile app.py'
+                echo 'Python application syntax check passed'
             }
         }
 
@@ -97,9 +98,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                    echo "Deploying application..."
-                    echo "Environment: ${ENVIRONMENT}"
-
                     docker rm -f jenkins-app 2>/dev/null || true
 
                     docker run -d \
@@ -110,7 +108,6 @@ pipeline {
 
                     sleep 3
 
-                    echo "Application deployed successfully"
                     docker ps --filter "name=jenkins-app"
                 '''
             }
