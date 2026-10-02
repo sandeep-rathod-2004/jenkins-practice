@@ -3,12 +3,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                echo 'Code checked out from GitHub'
-            }
-        }
-
         stage('Build') {
             steps {
                 sh 'python3 --version'
@@ -22,9 +16,21 @@ pipeline {
             }
         }
 
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t jenkins-practice:latest .'
+            }
+        }
+
+        stage('Docker Test') {
+            steps {
+                sh 'docker run --rm jenkins-practice:latest'
+            }
+        }
+
         stage('Finish') {
             steps {
-                echo 'Build and tests completed successfully!'
+                echo 'CI + Docker pipeline completed successfully!'
             }
         }
     }
