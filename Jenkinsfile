@@ -18,19 +18,37 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t jenkins-practice:latest .'
+                sh 'docker build -t sandeep352004/jenkins-practice:latest .'
             }
         }
 
         stage('Docker Test') {
             steps {
-                sh 'docker run --rm jenkins-practice:latest'
+                sh 'docker run --rm sandeep352004/jenkins-practice:latest'
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_TOKEN'
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push sandeep352004/jenkins-practice:latest
+                        docker logout
+                    '''
+                }
             }
         }
 
         stage('Finish') {
             steps {
-                echo 'CI + Docker pipeline completed successfully!'
+                echo 'CI/CD pipeline completed successfully!'
             }
         }
     }
