@@ -18,13 +18,20 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t sandeep352004/jenkins-practice:latest .'
+                sh '''
+                    docker build \
+                      -t sandeep352004/jenkins-practice:build-${BUILD_NUMBER} \
+                      -t sandeep352004/jenkins-practice:latest \
+                      .
+                '''
             }
         }
 
         stage('Docker Test') {
             steps {
-                sh 'docker run --rm sandeep352004/jenkins-practice:latest'
+                sh '''
+                    docker run --rm sandeep352004/jenkins-practice:build-${BUILD_NUMBER}
+                '''
             }
         }
 
@@ -39,7 +46,10 @@ pipeline {
                 ]) {
                     sh '''
                         echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin
+
+                        docker push sandeep352004/jenkins-practice:build-${BUILD_NUMBER}
                         docker push sandeep352004/jenkins-practice:latest
+
                         docker logout
                     '''
                 }
@@ -48,7 +58,7 @@ pipeline {
 
         stage('Finish') {
             steps {
-                echo 'CI/CD pipeline completed successfully!'
+                echo "CI/CD completed - Build ${BUILD_NUMBER}"
             }
         }
     }
