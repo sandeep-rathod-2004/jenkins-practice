@@ -12,6 +12,13 @@ pipeline {
             }
         }
 
+        stage('Show Parameters') {
+            steps {
+                echo "Selected Environment: ${params.ENVIRONMENT}"
+                echo "Run Tests: ${params.RUN_TESTS}"
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'python3 --version'
@@ -20,6 +27,11 @@ pipeline {
         }
 
         stage('Test') {
+            when {
+                expression {
+                    params.RUN_TESTS
+                }
+            }
             steps {
                 sh 'python3 -m pytest test_app.py'
             }
@@ -73,7 +85,9 @@ pipeline {
 
         stage('Finish') {
             steps {
-                echo "CI/CD completed - Build ${BUILD_NUMBER}"
+                echo "CI/CD completed successfully"
+                echo "Build Number: ${BUILD_NUMBER}"
+                echo "Environment: ${params.ENVIRONMENT}"
             }
         }
     }
