@@ -3,29 +3,31 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
+        stage('System Check') {
             steps {
-                echo 'GitHub source code is ready'
+                sh 'java -version'
+                sh 'git --version'
+                sh 'pwd'
+                sh 'ls -la'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building application'
+                sh 'echo "Building application..."'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Tests completed'
+                sh 'echo "Running tests..."'
             }
         }
 
         stage('Finish') {
             steps {
-                echo 'CI pipeline successful!'
+                sh 'echo "CI pipeline completed successfully!"'
             }
         }
-
     }
 }
