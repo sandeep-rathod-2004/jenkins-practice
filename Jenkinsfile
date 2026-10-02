@@ -3,30 +3,28 @@ pipeline {
 
     stages {
 
-        stage('System Check') {
+        stage('Checkout') {
             steps {
-                sh 'java -version'
-                sh 'git --version'
-                sh 'pwd'
-                sh 'ls -la'
+                echo 'Code checked out from GitHub'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'echo "Building application..."'
+                sh 'python3 --version'
+                sh 'python3 app.py'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'echo "Running tests..."'
+                sh 'python3 -m pytest test_app.py'
             }
         }
 
         stage('Finish') {
             steps {
-                sh 'echo "CI pipeline completed successfully!"'
+                echo 'Build and tests completed successfully!'
             }
         }
     }
