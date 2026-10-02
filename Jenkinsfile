@@ -3,6 +3,15 @@ pipeline {
 
     stages {
 
+        stage('Environment') {
+            steps {
+                sh 'echo "Job Name: $JOB_NAME"'
+                sh 'echo "Build Number: $BUILD_NUMBER"'
+                sh 'echo "Workspace: $WORKSPACE"'
+                sh 'echo "Build URL: $BUILD_URL"'
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'python3 --version'
@@ -30,7 +39,8 @@ pipeline {
         stage('Docker Test') {
             steps {
                 sh '''
-                    docker run --rm sandeep352004/jenkins-practice:build-${BUILD_NUMBER}
+                    docker run --rm \
+                      sandeep352004/jenkins-practice:build-${BUILD_NUMBER}
                 '''
             }
         }
@@ -45,10 +55,15 @@ pipeline {
                     )
                 ]) {
                     sh '''
-                        echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin
+                        echo "$DOCKER_TOKEN" | docker login \
+                            -u "$DOCKER_USER" \
+                            --password-stdin
 
-                        docker push sandeep352004/jenkins-practice:build-${BUILD_NUMBER}
-                        docker push sandeep352004/jenkins-practice:latest
+                        docker push \
+                            sandeep352004/jenkins-practice:build-${BUILD_NUMBER}
+
+                        docker push \
+                            sandeep352004/jenkins-practice:latest
 
                         docker logout
                     '''
